@@ -27,7 +27,9 @@ _.extend(WebChannelReceiver.prototype, Backbone.Events, {
   },
 
   receiveMessage (event) {
-    const detail = event.detail;
+    console.log(' this._webChannelId, ', this._webChannelId);
+    console.log('receiver on this._webChannelId, ', event);
+    const detail = JSON.parse(event.detail);
 
     if (! (detail && detail.id)) {
       // malformed message
@@ -46,6 +48,12 @@ _.extend(WebChannelReceiver.prototype, Backbone.Events, {
     //
     // Ignore events with no `message` field.
     const message = detail.message;
+    console.log('m', message)
+    /*
+      command: <command>,
+  data: <data>,
+  messageId: <message id>
+     */
     if (message) {
       const error = this._extractErrorFromMessage(message);
       if (error) {

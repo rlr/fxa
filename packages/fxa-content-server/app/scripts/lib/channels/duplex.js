@@ -174,6 +174,7 @@ _.extend(DuplexChannel.prototype, new BaseChannel(), {
   },
 
   onMessageReceived (message) {
+    console.log('onMessageReceived', message)
     var { command, data, messageId } = this.parseMessage(message);
     if (messageId) {
       // A message is not necessarily in response to a sent request.

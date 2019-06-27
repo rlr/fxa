@@ -33,6 +33,7 @@ WebChannelSender.prototype = {
       this._saveEventName(command);
       const eventDetail = createEventDetail(this._webChannelId, command, data, messageId);
       const event = createEvent(this._window, eventDetail);
+      console.log('ev', event)
       this._window.dispatchEvent(event);
     });
   },

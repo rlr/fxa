@@ -88,6 +88,7 @@ _.extend(WebChannel.prototype, new DuplexChannel(), {
    */
   isFxaStatusSupported (userAgent = this.getUserAgentString()) {
     const uap = this.getUserAgent(userAgent);
+    return true
     return uap.isFirefoxDesktop() && uap.parseVersion().major >= FXA_STATUS_MIN_FIREFOX_DESKTOP_VERSION;
   },
 
