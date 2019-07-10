@@ -30,6 +30,7 @@ const serveStatic = require('serve-static');
 
 const config = require('../lib/configuration');
 const raven = require('../lib/raven');
+logger.info('content.config', { config: config.toString() });
 
 const userAgent = require('../lib/user-agent');
 if (!userAgent.isToVersionStringSupported()) {
