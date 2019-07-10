@@ -11,7 +11,57 @@
     <div class="error"></div>
 
     <form novalidate>
-      <p>{{#t}}If you use this account for Mozilla apps and services like AMO, Pocket, and Screenshots you should first log in and remove any saved personal information. Once you delete your account here you may lose access to it everywhere.{{/t}}</p>
+      <p>{{#t}}Your Firefox Account gives you access to products and services that help keep your web experience secure, private, and productive.{{/t}}</p>
+
+      <p>{{#t}}You currently use:{{/t}}</p>
+
+        <ul class="client-list button-row">
+          {{clients}}
+          {{#clients}}
+
+            {{#isDevice}}
+              <li class="client {{deviceType}} client-device {{#isCurrentSession}}client-current{{/isCurrentSession}}"
+                {{#genericOS}}data-os="{{genericOS}}"{{/genericOS}}
+                data-name="{{name}}"
+                title="{{title}}"
+                id="{{id}}">
+                <div class="client-name">{{name}}</div>
+                {{#isCurrentSession}}
+                    <div class="device-current">{{#t}}Current device{{/t}}</div>
+                {{/isCurrentSession}}
+                {{^isCurrentSession}}
+                    <div class="last-connected">{{lastAccessTimeFormatted}}</div>
+                {{/isCurrentSession}}
+                <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Disconnect…{{/t}}</button>
+              </li>
+            {{/isDevice}}
+
+            {{#isWebSession}}
+                <li class="client {{deviceType}} client-webSession"
+                    {{#genericOS}}data-os="{{genericOS}}"{{/genericOS}}
+                    data-name="{{name}}"
+                    id="{{id}}">
+                    <div class="client-name" title="{{title}}">{{title}}</div>
+                  {{#isCurrentSession}}
+                    <div class="device-current">{{#t}}Current session{{/t}}</div>
+                  {{/isCurrentSession}}
+                  {{^isCurrentSession}}
+                    <div class="last-connected">{{lastAccessTimeFormatted}}</div>
+                  {{/isCurrentSession}}
+                    <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Disconnect{{/t}}</button>
+                </li>
+            {{/isWebSession}}
+
+            {{#isOAuthApp}}
+                <li class="client {{deviceType}} client-oAuthApp" data-name="{{name}}" id="{{id}}">
+                  <div class="client-name" title="{{title}}">{{name}}</div>
+                    <div class="last-connected">{{userAgent}} {{lastAccessTimeFormatted}}</div>
+                  <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Revoke{{/t}}</button>
+                </li>
+            {{/isOAuthApp}}
+
+        {{/clients}}
+      </ul>
 
       <div class="input-row password-row">
         <!-- add the autocomplete=off attribute - the user is deleting the account, they most likely don't want the password saved. -->
