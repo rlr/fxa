@@ -28,7 +28,7 @@ function validateMessage(message) {
   return Joi.validate(message, MESSAGE_SCHEMA);
 }
 
-module.exports = function(log, config) {
+module.exports = function(log, config, mailer) {
   return function start(messageQueue, db) {
     async function handleSubHubUpdates(message) {
       const uid = message && message.uid;

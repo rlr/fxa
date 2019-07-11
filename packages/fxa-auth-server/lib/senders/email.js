@@ -164,30 +164,34 @@ module.exports = function(log, config, oauthdb) {
     this.accountSettingsUrl = mailerConfig.accountSettingsUrl;
     this.accountRecoveryCodesUrl = mailerConfig.accountRecoveryCodesUrl;
     this.androidUrl = mailerConfig.androidUrl;
+    this.cancelSubscriptionUrl = mailerConfig.cancelSubscriptionUrl;
+    this.createAccountRecoveryUrl = mailerConfig.createAccountRecoveryUrl;
+    this.downloadSubscriptionUrl = mailerConfig.downloadSubscriptionUrl;
+    this.emailService = sender || require('./email_service')(config);
     this.initiatePasswordChangeUrl = mailerConfig.initiatePasswordChangeUrl;
     this.initiatePasswordResetUrl = mailerConfig.initiatePasswordResetUrl;
     this.iosUrl = mailerConfig.iosUrl;
     this.iosAdjustUrl = mailerConfig.iosAdjustUrl;
     this.mailer = sender || nodemailer.createTransport(options);
-    this.emailService = sender || require('./email_service')(config);
     this.passwordManagerInfoUrl = mailerConfig.passwordManagerInfoUrl;
     this.passwordResetUrl = mailerConfig.passwordResetUrl;
+    this.prependVerificationSubdomain =
+      mailerConfig.prependVerificationSubdomain;
     this.privacyUrl = mailerConfig.privacyUrl;
     this.reportSignInUrl = mailerConfig.reportSignInUrl;
     this.revokeAccountRecoveryUrl = mailerConfig.revokeAccountRecoveryUrl;
-    this.createAccountRecoveryUrl = mailerConfig.createAccountRecoveryUrl;
     this.sender = mailerConfig.sender;
     this.sesConfigurationSet = mailerConfig.sesConfigurationSet;
     this.supportUrl = mailerConfig.supportUrl;
     this.syncUrl = mailerConfig.syncUrl;
     this.templates = templates;
+    this.termsAndCancellationUrl = mailerConfig.termsAndCancellationUrl;
     this.translator = translator.getTranslator;
+    this.updateBillingUrl = mailerConfig.updateBillingUrl;
     this.verificationUrl = mailerConfig.verificationUrl;
     this.verifyLoginUrl = mailerConfig.verifyLoginUrl;
     this.verifySecondaryEmailUrl = mailerConfig.verifySecondaryEmailUrl;
     this.verifyPrimaryEmailUrl = mailerConfig.verifyPrimaryEmailUrl;
-    this.prependVerificationSubdomain =
-      mailerConfig.prependVerificationSubdomain;
   }
 
   Mailer.prototype.stop = function() {
@@ -734,7 +738,7 @@ module.exports = function(log, config, oauthdb) {
       );
       const headers = {
         'X-Link': links.link,
-        'X-Verify-Code': message.code,
+        'X-Verify-Code': code,
       };
 
       return this.send(
@@ -1716,6 +1720,40 @@ module.exports = function(log, config, oauthdb) {
     );
   };
 
+  Mailer.prototype.downloadSubscriptionEmail = async function(message) {
+    const { email, service, uid } = message;
+
+    log.trace('mailer.downloadSubscription', { code, email, uid });
+
+    const query = { service, uid };
+    const links = this._generateLinks(
+      this.downloadSubscriptionUrl,
+      email,
+      query,
+      template
+    );
+    const headers = {
+      'X-Link': links.link,
+    };
+
+    return this.send(
+      Object.assign({}, message, {
+        headers,
+        subject,
+        template,
+        templateValues: {
+          email,
+          link: links.link,
+          oneClickLink: links.oneClickLink,
+          cancelSubscriptionUrl: links.cancelSubscriptionUrl,
+          termsAndCancellationUrl: links.termsAndCancellationUrl,
+          updateBillingUrl: links.updateBillingUrl,
+          supportLinkAttributes: links.supportLinkAttributes,
+        },
+      })
+    );
+  };
+
   Mailer.prototype._generateUTMLink = function(
     link,
     query,
@@ -1840,6 +1878,12 @@ module.exports = function(log, config, oauthdb) {
     links['createAccountRecoveryLink'] = this.createAccountRecoveryLink(
       templateName
     );
+
+    // TODO: Expand params etc
+    links.cancelSubscriptionUrl = this.cancelSubscriptionUrl;
+    links.downloadSubscriptionUrl = this.downloadSubscriptionUrl;
+    links.termsAndCancellationUrl = this.termsAndCancellationUrl;
+    links.updateBillingUrl = this.updateBillingUrl;
 
     const queryOneClick = extend(query, { one_click: true });
     if (primaryLink && utmContent) {

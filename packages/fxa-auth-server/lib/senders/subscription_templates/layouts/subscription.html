@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{language}}" xml:lang="{{language}}">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{{subject}}</title>
+    {{> metadata}}
+  </head>
+
+  <body style="-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0; padding: 0;">
+    <table
+     align="center"
+     border="0"
+     cellpadding="0"
+     cellspacing="0"
+     width="310"
+     style="-webkit-text-size-adjust: 100%; border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 310px; margin: 0 auto;"
+    >
+      <tr style="page-break-before: always">
+        <td align="center" style="padding: 20px 0;">
+          <img
+           src="https://image.e.mozilla.org/lib/fe9915707361037e75/m/4/11c1e411-7dfe-4e04-914c-0f098edac96c.png"
+           height="48"
+           width="48"
+           alt=""
+           style="-ms-interpolation-mode: bicubic;"
+          />
+          Firefox
+        </td>
+      </tr>
+
+      <tr style="page-break-before: always">
+        {{{body}}}
+      </tr>
+
+      <tr style="page-break-before: always">
+        <td valign="top">
+          <p style="font-family: sans-serif; font-weight: normal; margin: 0; text-align: center; color: #737373; font-size: 11px; line-height: 18px; width: 310px !important; word-wrap:break-word">
+            {{t "This is an automated email; if you received it in error, no action is required."}}
+            <br />
+            <a
+             href="{{{termsAndCancellationUrl}}}"
+             style="color: #0a84ff; font-family: sans-serif; font-size: 11px; line-height: 18px;"
+            >
+              {{t "Terms and cancellation policy"}}
+            </a>
+            &bull;
+            <a
+             href="{{{privacyUrl}}}"
+             style="color: #0a84ff; font-family: sans-serif; font-size: 11px; line-height: 18px;"
+            >
+              {{t "Privacy notice"}}
+            </a>
+            &#8226;
+            <a
+             href="{{{cancelSubscriptionUrl}}}"
+             style="color: #0a84ff; font-family: sans-serif; font-size: 11px; line-height: 18px;"
+            >
+              {{t "Cancel subscription"}}
+            </a>
+            •
+            <a
+             href="{{{updateBillingUrl}}}"
+             style="color: #0a84ff; font-family: sans-serif; font-size: 11px; line-height: 18px;"
+            >
+              {{t "Update billing information"}}
+            </a>
+            <br />
+            <img
+             src=""
+             height="30"
+             width="30"
+             alt=""
+             style="-ms-interpolation-mode: bicubic;"
+            />
+            <br />
+            Mozilla
+            <br />
+            331 E Evelyn Ave, Mountain View, CA 94041
+          <br />
+          <a href="https://www.mozilla.org/about/legal/terms/services/" style="color: #0a84ff; text-decoration: none; font-family: sans-serif; font-size: 11px; line-height: 18px;">{{t "Firefox Cloud Terms of Service"}}</a></p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
