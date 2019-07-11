@@ -14,6 +14,9 @@ import AttachedClients from '../../models/attached-clients';
 
 const t = msg => msg;
 
+const LOADING_INDICATOR_BUTTON = '.settings-button.settings-unit-loading';
+const UNIT_DETAILS = '.settings-unit-details';
+
 var View = FormView.extend({
   template: Template,
   className: 'delete-account',
@@ -29,22 +32,39 @@ var View = FormView.extend({
     }
   },
 
+  setInitialContext(context) {
+    context.set({
+      email: this.getSignedInAccount().get('email'),
+      clients: this._attachedClients.toJSON(),
+      isPanelOpen: this.isPanelOpen(),
+    });
+  },
+
+  openPanel() {
+    console.log('in openPanel');
+    this.logViewEvent('open');
+    this.$el.find(UNIT_DETAILS).hide();
+    this.$el.find(LOADING_INDICATOR_BUTTON).show();
+
+    // returns a promise - but, we should be using getActiveSubscriptions
+    return this._fetchAttachedClients();
+    // return this.validateAndSubmit(null, {
+    //   artificialDelay: View.MIN_REFRESH_INDICATOR_MS,
+    // });
+  },
+
   _fetchAttachedClients() {
     const start = Date.now();
+    // console.log(this._attachedClients.fetchClients(this.user).then(() => {
+    //   this.logFlowEvent(`timing.clients.fetch.${Date.now() - start}`);
+    // }));
     return this._attachedClients.fetchClients(this.user).then(() => {
       this.logFlowEvent(`timing.clients.fetch.${Date.now() - start}`);
     });
   },
 
-  setInitialContext(context) {
-    context.set({
-      email: this.getSignedInAccount().get('email'),
-      clients: this._attachedClients.toJSON(),
-    });
-  },
-
-  // to do: create deleteAccount method, move things from submit into it
   submit() {
+    console.log('in submit');
     var account = this.getSignedInAccount();
     var password = this.getElementValue('.password');
 
