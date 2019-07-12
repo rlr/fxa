@@ -1,3 +1,17 @@
+## 1.141.4
+
+### Bug fixes
+
+-   cdn: Ensure JS files are fetched from the CDN (e5f8c9b90)
+
+## 1.141.3
+
+No changes.
+
+## 1.141.2
+
+No changes.
+
 ## 1.141.1
 
 ### New features
