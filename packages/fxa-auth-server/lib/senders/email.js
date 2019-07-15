@@ -146,7 +146,13 @@ module.exports = function(log, config, oauthdb) {
     return `messageType=fxa-${templateName}, app=fxa, service=${serviceName}`;
   }
 
-  function Mailer(translator, templates, mailerConfig, sender) {
+  function Mailer(
+    translator,
+    templates,
+    subscriptionTemplates,
+    mailerConfig,
+    sender
+  ) {
     const options = {
       host: mailerConfig.host,
       secure: mailerConfig.secure,
@@ -168,6 +174,7 @@ module.exports = function(log, config, oauthdb) {
     this.createAccountRecoveryUrl = mailerConfig.createAccountRecoveryUrl;
     this.downloadSubscriptionUrl = mailerConfig.downloadSubscriptionUrl;
     this.emailService = sender || require('./email_service')(config);
+    this.getLocale = translator.getLocale;
     this.initiatePasswordChangeUrl = mailerConfig.initiatePasswordChangeUrl;
     this.initiatePasswordResetUrl = mailerConfig.initiatePasswordResetUrl;
     this.iosUrl = mailerConfig.iosUrl;
@@ -182,6 +189,7 @@ module.exports = function(log, config, oauthdb) {
     this.revokeAccountRecoveryUrl = mailerConfig.revokeAccountRecoveryUrl;
     this.sender = mailerConfig.sender;
     this.sesConfigurationSet = mailerConfig.sesConfigurationSet;
+    this.subscriptionTemplates = subscriptionTemplates;
     this.supportUrl = mailerConfig.supportUrl;
     this.syncUrl = mailerConfig.syncUrl;
     this.templates = templates;
@@ -297,7 +305,10 @@ module.exports = function(log, config, oauthdb) {
   Mailer.prototype.localize = function(message) {
     const translator = this.translator(message.acceptLanguage);
 
-    const localized = this.templates[message.template](
+    const templates = this[
+      message.layout === 'subscription' ? 'subscriptionTemplates' : 'templates'
+    ];
+    const localized = templates[message.template](
       extend(
         {
           translator: translator,
@@ -1721,9 +1732,9 @@ module.exports = function(log, config, oauthdb) {
   };
 
   Mailer.prototype.downloadSubscriptionEmail = async function(message) {
-    const { email, service, uid } = message;
+    const { email, productId, uid } = message;
 
-    log.trace('mailer.downloadSubscription', { code, email, uid });
+    log.trace('mailer.downloadSubscription', { email, productId, uid });
 
     const query = { service, uid };
     const links = this._generateLinks(
@@ -1735,23 +1746,28 @@ module.exports = function(log, config, oauthdb) {
     const headers = {
       'X-Link': links.link,
     };
+    // TODO: product, subject, action and icon must vary per subscription for phase 2
+    const product = gettext('Firefox VPN');
+    const subject = gettext('Welcome to Firefox VPN!');
+    const action = gettext('Download Firefox VPN');
+    const icon = 'https://example.com/TODO';
 
-    return this.send(
-      Object.assign({}, message, {
-        headers,
+    return this.send({
+      ...message,
+      headers,
+      layout: 'subscription',
+      subject,
+      template: 'downloadSubscription',
+      templateValues: {
+        ...links,
+        action,
+        email,
+        icon,
+        language: this.getLocale(message.acceptLanguage),
+        product,
         subject,
-        template,
-        templateValues: {
-          email,
-          link: links.link,
-          oneClickLink: links.oneClickLink,
-          cancelSubscriptionUrl: links.cancelSubscriptionUrl,
-          termsAndCancellationUrl: links.termsAndCancellationUrl,
-          updateBillingUrl: links.updateBillingUrl,
-          supportLinkAttributes: links.supportLinkAttributes,
-        },
-      })
-    );
+      },
+    });
   };
 
   Mailer.prototype._generateUTMLink = function(

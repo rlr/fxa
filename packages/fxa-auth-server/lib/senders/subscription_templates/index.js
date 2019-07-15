@@ -47,7 +47,7 @@ function init(log, translator) {
   const layouts = new Map();
   forEachTemplate(LAYOUTS_DIR, compile(layouts));
 
-  return { render };
+  return render;
 
   function translate(...args) {
     return translator.format(translator.gettext(...args));
@@ -66,7 +66,7 @@ function init(log, translator) {
       throw error.unexpectedError();
     }
 
-    let html, txt;
+    let html, text;
 
     if (template.html && layout.html) {
       html = layout.html({
@@ -76,13 +76,13 @@ function init(log, translator) {
     }
 
     if (template.txt && layout.txt) {
-      html = layout.txt({
+      text = layout.txt({
         ...data,
         body: template.txt(data),
       });
     }
 
-    return { html, txt };
+    return { html, text };
   }
 }
 

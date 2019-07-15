@@ -290,6 +290,12 @@ const conf = convict({
       default:
         'https://support.mozilla.org/kb/password-manager-remember-delete-change-and-import#w_viewing-and-deleting-passwords',
     },
+    cancellationPolicyUrl: {
+      default: 'https://example.com/TODO',
+      doc: 'Terms and cancellation policy URL',
+      env: 'TERMS_AND_CANCELLATION_URL',
+      format: String,
+    },
     cancelSubscriptionUrl: {
       default: 'https://example.com/TODO',
       doc: 'Cancel subscription URL',
@@ -300,12 +306,6 @@ const conf = convict({
       default: 'https://example.com/TODO',
       doc: 'Download subscription URL',
       env: 'DOWNLOAD_SUBSCRIPTION_URL',
-      format: String,
-    },
-    termsAndCancellationUrl: {
-      default: 'https://example.com/TODO',
-      doc: 'Terms and cancellation policy URL',
-      env: 'TERMS_AND_CANCELLATION_URL',
       format: String,
     },
     updateBillingUrl: {

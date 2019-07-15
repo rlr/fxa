@@ -22,29 +22,34 @@ const subhubUpdates = require(`${LIB_DIR}/subhub/updates`)(log, config);
 run();
 
 async function run() {
-  const subhubUpdatesQueue = new SQSReceiver(
-    config.subhubServerMessaging.region,
-    [config.subhubServerMessaging.subhubUpdatesQueueUrl]
-  );
+  try {
+    const subhubUpdatesQueue = new SQSReceiver(
+      config.subhubServerMessaging.region,
+      [config.subhubServerMessaging.subhubUpdatesQueueUrl]
+    );
 
-  const [db, translator] = await Promise.all([
-    require(`${LIB_DIR}/lib/db`)(config, log, Token).connect(
-      config[config.db.backend]
-    ),
-    require(`${LIB_DIR}/senders/translator`)(
-      config.i18n.supportedLanguages,
-      config.i18n.defaultLanguage
-    ),
-  ]);
+    const [db, translator] = await Promise.all([
+      require(`${LIB_DIR}/lib/db`)(config, log, Token).connect(
+        config[config.db.backend]
+      ),
+      require(`${LIB_DIR}/senders/translator`)(
+        config.i18n.supportedLanguages,
+        config.i18n.defaultLanguage
+      ),
+    ]);
 
-  const { email: mailer } = await require(`${LIB_DIR}/senders`)(
-    log,
-    config,
-    require(`${LIB_DIR}/error`),
-    require(`${LIB_DIR}/bounces`)(config, db),
-    translator,
-    require(`${LIB_DIR}/oauthdb`)(log, config)
-  );
+    const { email: mailer } = await require(`${LIB_DIR}/senders`)(
+      log,
+      config,
+      require(`${LIB_DIR}/error`),
+      require(`${LIB_DIR}/bounces`)(config, db),
+      translator,
+      require(`${LIB_DIR}/oauthdb`)(log, config)
+    );
 
-  subhubUpdates(subhubUpdatesQueue, db, mailer);
+    subhubUpdates(subhubUpdatesQueue, db, mailer);
+  } catch (err) {
+    log.error('bin.subhub.error', { err });
+    process.exit(1);
+  }
 }
