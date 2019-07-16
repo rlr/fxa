@@ -49,6 +49,7 @@ module.exports = function(log, config, oauthdb) {
   // Email template to UTM campaign map, each of these should be unique and
   // map to exactly one email template.
   const templateNameToCampaignMap = {
+    downloadSubscription: 'new-subscription',
     lowRecoveryCodesEmail: 'low-recovery-codes',
     newDeviceLoginEmail: 'new-device-signin',
     passwordResetRequiredEmail: 'password-reset-required',
@@ -81,6 +82,7 @@ module.exports = function(log, config, oauthdb) {
   // Email template to UTM content, this is typically the main call out link/button
   // in template.
   const templateNameToContentMap = {
+    downloadSubscription: 'download-subscription',
     lowRecoveryCodesEmail: 'recovery-codes',
     newDeviceLoginEmail: 'manage-account',
     passwordChangedEmail: 'password-change',
@@ -1736,7 +1738,8 @@ module.exports = function(log, config, oauthdb) {
 
     log.trace('mailer.downloadSubscription', { email, productId, uid });
 
-    const query = { service, uid };
+    const query = { productId, uid };
+    const template = 'downloadSubscription';
     const links = this._generateLinks(
       this.downloadSubscriptionUrl,
       email,
@@ -1757,7 +1760,7 @@ module.exports = function(log, config, oauthdb) {
       headers,
       layout: 'subscription',
       subject,
-      template: 'downloadSubscription',
+      template,
       templateValues: {
         ...links,
         action,
