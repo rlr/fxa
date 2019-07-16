@@ -18,50 +18,26 @@
 
       <p>{{#t}}You currently use:{{/t}}</p>
 
-      {{subscriptions}}
+        <ul class="account-summary-list">
+          {{#subscriptions}}
+            <li>
+              {{productName}}
+            </li>
+          {{/subscriptions}}
 
-      {{#subscriptions}}
-      {{/subscriptions}}
-
-        <ul class="client-list button-row">
           {{#clients}}
-
-            {{#isDevice}}
-              <li class="client {{deviceType}} client-device {{#isCurrentSession}}client-current{{/isCurrentSession}}"
-                {{#genericOS}}data-os="{{genericOS}}"{{/genericOS}}
-                data-name="{{name}}"
-                title="{{title}}"
-                id="{{id}}">
-                <div class="client-name">{{name}}</div>
-                {{#isCurrentSession}}
-                    <div class="device-current">{{#t}}Current device{{/t}}</div>
-                {{/isCurrentSession}}
-                {{^isCurrentSession}}
-                    <div class="last-connected">{{lastAccessTimeFormatted}}</div>
-                {{/isCurrentSession}}
-              </li>
-            {{/isDevice}}
-
             {{#isWebSession}}
-                <li class="client {{deviceType}} client-webSession"
+                <li class="{{deviceType}}"
                     {{#genericOS}}data-os="{{genericOS}}"{{/genericOS}}
                     data-name="{{name}}"
                     id="{{id}}">
                     <div class="client-name" title="{{title}}">{{title}}</div>
-                  {{#isCurrentSession}}
-                    <div class="device-current">{{#t}}Current session{{/t}}</div>
-                  {{/isCurrentSession}}
-                  {{^isCurrentSession}}
-                    <div class="last-connected">{{lastAccessTimeFormatted}}</div>
-                  {{/isCurrentSession}}
                 </li>
             {{/isWebSession}}
 
             {{#isOAuthApp}}
-                <li class="client {{deviceType}} client-oAuthApp" data-name="{{name}}" id="{{id}}">
+                <li class="{{deviceType}}" data-name="{{name}}" id="{{id}}">
                   <div class="client-name" title="{{title}}">{{name}}</div>
-                    <div class="last-connected">{{userAgent}} {{lastAccessTimeFormatted}}</div>
-                  <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Revoke{{/t}}</button>
                 </li>
             {{/isOAuthApp}}
 
@@ -69,14 +45,18 @@
       </ul>
 
       <div class="input-row">
-        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
-        <label for="{{someVar}}">{{#t}}Account deletion is permanent. My account cannot be reactivated.{{/t}}</label>
+        <input id="delete-account-permanent" type="checkbox" value="delete-account-permanent" />
+        <label for="delete-account-permanent">{{#t}}Account deletion is permanent. My account cannot be reactivated.{{/t}}</label>
+      </div>
 
-        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
-        <label for="{{someVar}}">{{#t}}I will lose access to any Mozilla apps and services connected to my account. My subscriptions will be cancelled.{{/t}}</label>
+      <div class="input-row">
+        <input id="delete-account-lose-access" type="checkbox" value="delete-account-lose-access" />
+        <label for="delete-account-lose-access">{{#t}}I will lose access to any Mozilla apps and services connected to my account. My subscriptions will be cancelled.{{/t}}</label>
+      </div>
 
-        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
-        <label for="{{someVar}}">{{#t}}I will lose any saved information within the Mozilla apps and services affiliated with my account.{{/t}}</label>
+      <div class="input-row">
+        <input id="delete-account-saved-info" type="checkbox" value="delete-account-saved-info" />
+        <label for="delete-account-saved-info">{{#t}}I will lose any saved information within the Mozilla apps and services affiliated with my account.{{/t}}</label>
       </div>
 
       <div class="input-row password-row">

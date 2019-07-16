@@ -82,8 +82,7 @@ var View = FormView.extend({
     return account.fetchActiveSubscriptions().then(subscriptions => {
       // do I need to this up anywhere else or does this create `timing.subscriptions`?
       this.logFlowEvent(`timing.subscriptions.fetch.${Date.now() - start}`);
-
-      //this.reset(subscriptions); // how to update context?
+      this._activeSubscriptions = subscriptions;
     });
   },
 
@@ -95,8 +94,8 @@ var View = FormView.extend({
   },
 
   submit() {
-    var account = this.getSignedInAccount();
-    var password = this.getElementValue('.password');
+    const account = this.getSignedInAccount();
+    const password = this.getElementValue('.password');
 
     return this.user
       .deleteAccount(account, password)
