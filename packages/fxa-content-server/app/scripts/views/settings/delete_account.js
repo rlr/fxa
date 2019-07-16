@@ -10,7 +10,8 @@ import ServiceMixin from '../mixins/settings-panel-mixin';
 import Session from '../../lib/session';
 import SettingsPanelMixin from '../mixins/service-mixin';
 import Template from 'templates/settings/delete_account.mustache';
-// import AttachedClients from '../../models/attached-clients';
+import AttachedClients from '../../models/attached-clients';
+import { CLIENT_TYPE_WEB_SESSION } from '../../lib/constants';
 
 const t = msg => msg;
 
@@ -23,24 +24,42 @@ var View = FormView.extend({
   viewName: 'settings.delete-account',
 
   initialize(options) {
-    // this._attachedClients = options.attachedClients;
-    // this._activeSubscriptions = options.activeSubscriptions;
+    this._attachedClients = options.attachedClients;
+    this._activeSubscriptions = options.activeSubscriptions;
 
-    // if (!this._attachedClients) {
-    //   this._attachedClients = new AttachedClients([], {
-    //     notifier: options.notifier,
-    //   });
-    // }
-    this._activeSubscriptions = [];
+    if (!this._attachedClients) {
+      this._attachedClients = new AttachedClients([], {
+        notifier: options.notifier,
+      });
+    }
+    this._activeSubscriptions = ['test'];
+  },
+
+  _formatTitleAndScope(items) {
+    return items.map(item => {
+      item.title = item.name;
+
+      if (item.scope) item.title += `- ${item.scope}`;
+
+      if (item.clientType === CLIENT_TYPE_WEB_SESSION) {
+        if (item.userAgent) {
+          item.title = this.translate(t('Web Session, %(userAgent)s'), {
+            userAgent: item.userAgent,
+          });
+        } else {
+          item.title = t('Web Session');
+        }
+      }
+
+      return item;
+    });
   },
 
   setInitialContext(context) {
-    // still up in the air: do I display anything from 'clients'? May need other
-    // methods from clients.js if so (like _formatAccessTimeAndScope)
-
+    const clients = this._attachedClients.toJSON();
     context.set({
       email: this.getSignedInAccount().get('email'),
-      // clients: this._attachedClients.toJSON(),
+      clients: this._formatTitleAndScope(clients),
       isPanelOpen: this.isPanelOpen(),
       subscriptions: this._activeSubscriptions,
     });
@@ -51,11 +70,8 @@ var View = FormView.extend({
     this.$el.find(UNIT_DETAILS).hide();
     this.$el.find(LOADING_INDICATOR_BUTTON).show();
 
-    // return account.fetchActiveSubscriptions().then(subs => this.render());
-    // return this._fetchAttachedClients().then(() => this.render());
-
     return Promise.all([
-      // this._fetchAttachedClients(),
+      this._fetchAttachedClients(),
       this._fetchActiveSubscriptions(),
     ]).then(() => this.render());
   },
@@ -63,9 +79,11 @@ var View = FormView.extend({
   _fetchActiveSubscriptions() {
     const account = this.getSignedInAccount();
     const start = Date.now();
-    return account.fetchActiveSubscriptions().then(() => {
+    return account.fetchActiveSubscriptions().then(subscriptions => {
       // do I need to this up anywhere else or does this create `timing.subscriptions`?
       this.logFlowEvent(`timing.subscriptions.fetch.${Date.now() - start}`);
+
+      //this.reset(subscriptions); // how to update context?
     });
   },
 
