@@ -25,32 +25,34 @@ const PARTIALS_DIR = path.join(TEMPLATES_DIR, 'partials');
 
 module.exports = init;
 
-function init(log, translator) {
-  if (!log || !translator) {
-    log.error('templates.init.invalidArg', {
-      log: !!log,
-      translator: !!translator,
-    });
+async function init(log) {
+  if (!log) {
     throw error.unexpectedError();
   }
 
   handlebars.html.registerHelper('t', translate);
   handlebars.txt.registerHelper('t', translate);
 
-  forEachTemplate(PARTIALS_DIR, (template, name, type) => {
+  await forEachTemplate(PARTIALS_DIR, (template, name, type) => {
     handlebars[type].registerPartial(name, template);
   });
 
   const templates = new Map();
-  forEachTemplate(TEMPLATES_DIR, compile(templates));
-
   const layouts = new Map();
-  forEachTemplate(LAYOUTS_DIR, compile(layouts));
 
-  return render;
+  await Promise.all([
+    forEachTemplate(TEMPLATES_DIR, compile(templates)),
+    forEachTemplate(LAYOUTS_DIR, compile(layouts)),
+  ]);
 
-  function translate(...args) {
-    return translator.format(translator.gettext(...args));
+  return { render };
+
+  function translate(string) {
+    if (this.translator) {
+      return this.translator.format(this.translator.gettext(string), this);
+    }
+
+    return string;
   }
 
   function render(templateName, layoutName, data) {
@@ -88,21 +90,25 @@ function init(log, translator) {
 
 async function forEachTemplate(dir, action) {
   const files = await readDir(dir);
-  files.forEach(async file => {
-    const parts = TEMPLATE_FILE.exec(file);
-    if (parts) {
-      const template = await readFile(path.join(__dirname, file), {
-        encoding: 'utf8',
-      });
-      action(template, parts[1], parts[2]);
-    }
-  });
+  return Promise.all(
+    files.map(async file => {
+      const parts = TEMPLATE_FILE.exec(file);
+      if (parts) {
+        const template = await readFile(path.join(dir, file), {
+          encoding: 'utf8',
+        });
+        return action(template, parts[1], parts[2]);
+      }
+
+      return Promise.resolve();
+    })
+  );
 }
 
 function compile(map) {
   return (template, name, type) => {
     const item = map.get(name) || {};
     item[type] = handlebars[type].compile(template);
-    map.set(item);
+    map.set(name, item);
   };
 }

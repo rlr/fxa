@@ -3,16 +3,16 @@
 {{t "This is an automated email; if you received it in error, no action is required."}}
 
 {{t "Terms and cancellation policy:"}}
-{{{cancellationPolicyUrl}}
+{{{cancellationPolicyUrl}}}
 
 {{t "Privacy notice:"}}
 {{{privacyUrl}}}
 
 {{t "Cancel subscription:"}}
-{{{cancelSubscriptionUrl}}
+{{{cancelSubscriptionUrl}}}
 
 {{t "Update billing information:"}}
-{{{updateBillingUrl}}
+{{{updateBillingUrl}}}
 
 Mozilla
 331 E Evelyn Ave, Mountain View, CA 94041

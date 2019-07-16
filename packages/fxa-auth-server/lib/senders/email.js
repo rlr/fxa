@@ -176,7 +176,6 @@ module.exports = function(log, config, oauthdb) {
     this.createAccountRecoveryUrl = mailerConfig.createAccountRecoveryUrl;
     this.downloadSubscriptionUrl = mailerConfig.downloadSubscriptionUrl;
     this.emailService = sender || require('./email_service')(config);
-    this.getLocale = translator.getLocale;
     this.initiatePasswordChangeUrl = mailerConfig.initiatePasswordChangeUrl;
     this.initiatePasswordResetUrl = mailerConfig.initiatePasswordResetUrl;
     this.iosUrl = mailerConfig.iosUrl;
@@ -307,17 +306,27 @@ module.exports = function(log, config, oauthdb) {
   Mailer.prototype.localize = function(message) {
     const translator = this.translator(message.acceptLanguage);
 
-    const templates = this[
-      message.layout === 'subscription' ? 'subscriptionTemplates' : 'templates'
-    ];
-    const localized = templates[message.template](
-      extend(
+    let localized;
+    if (message.layout === 'subscription') {
+      localized = this.subscriptionTemplates.render(
+        message.template,
+        message.layout,
         {
-          translator: translator,
-        },
-        message.templateValues
-      )
-    );
+          ...message.templateValues,
+          language: translator.language,
+          translator,
+        }
+      );
+    } else {
+      localized = this.templates[message.template](
+        extend(
+          {
+            translator: translator,
+          },
+          message.templateValues
+        )
+      );
+    }
 
     return {
       html: localized.html,
@@ -1766,7 +1775,6 @@ module.exports = function(log, config, oauthdb) {
         action,
         email,
         icon,
-        language: this.getLocale(message.acceptLanguage),
         product,
         subject,
       },
