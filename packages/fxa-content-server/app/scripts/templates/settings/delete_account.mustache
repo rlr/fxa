@@ -1,4 +1,4 @@
-<div id="delete-account" class="settings-unit">
+<div id="delete-account" class="settings-unit {{#isPanelOpen}}open{{/isPanelOpen}}">
   <div class="settings-unit-stub">
     <header class="settings-unit-summary">
       <h2 class="settings-unit-title">{{#t}}Delete account{{/t}}</h2>
@@ -18,8 +18,12 @@
 
       <p>{{#t}}You currently use:{{/t}}</p>
 
+      {{subscriptions}}
+
+      {{#subscriptions}}
+      {{/subscriptions}}
+
         <ul class="client-list button-row">
-          {{clients}}
           {{#clients}}
 
             {{#isDevice}}
@@ -35,7 +39,6 @@
                 {{^isCurrentSession}}
                     <div class="last-connected">{{lastAccessTimeFormatted}}</div>
                 {{/isCurrentSession}}
-                <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Disconnect…{{/t}}</button>
               </li>
             {{/isDevice}}
 
@@ -51,7 +54,6 @@
                   {{^isCurrentSession}}
                     <div class="last-connected">{{lastAccessTimeFormatted}}</div>
                   {{/isCurrentSession}}
-                    <button class="settings-button warning-button client-disconnect" data-id="{{id}}" data-type="{{clientType}}">{{#t}}Disconnect{{/t}}</button>
                 </li>
             {{/isWebSession}}
 
@@ -65,6 +67,17 @@
 
         {{/clients}}
       </ul>
+
+      <div class="input-row">
+        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
+        <label for="{{someVar}}">{{#t}}Account deletion is permanent. My account cannot be reactivated.{{/t}}</label>
+
+        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
+        <label for="{{someVar}}">{{#t}}I will lose access to any Mozilla apps and services connected to my account. My subscriptions will be cancelled.{{/t}}</label>
+
+        <input id="{{someVar}}" type="checkbox" class="" value="{{someVar}}" />
+        <label for="{{someVar}}">{{#t}}I will lose any saved information within the Mozilla apps and services affiliated with my account.{{/t}}</label>
+      </div>
 
       <div class="input-row password-row">
         <!-- add the autocomplete=off attribute - the user is deleting the account, they most likely don't want the password saved. -->
