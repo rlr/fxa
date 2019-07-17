@@ -369,8 +369,24 @@ section.modal-panel {
 }
 
 .delete-account {
-  .account-summary-list {
+  &-summary-list {
+    padding-left: 14px;
+    margin: 0 0 24px;
+    line-height: 24px;
+  }
 
+  &-checkbox-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 32px;
+
+    &-item {
+      margin-bottom: 12px;
+    }
+  }
+
+  ul {
+    color: $faint-text-color;
   }
 }
 

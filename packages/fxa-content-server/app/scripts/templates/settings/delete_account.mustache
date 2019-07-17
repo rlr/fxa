@@ -14,11 +14,9 @@
     <div class="error"></div>
 
     <form novalidate>
-      <p>{{#t}}Your Firefox Account gives you access to products and services that help keep your web experience secure, private, and productive.{{/t}}</p>
+      <p>{{#t}}You've connected your Firefox account to Mozilla products that keep you secure and productive on the web:{{/t}}</p>
 
-      <p>{{#t}}You currently use:{{/t}}</p>
-
-        <ul class="account-summary-list">
+        <ul class="delete-account-summary-list">
           {{#subscriptions}}
             <li>
               {{productName}}
@@ -44,20 +42,24 @@
         {{/clients}}
       </ul>
 
-      <div class="input-row">
-        <input id="delete-account-permanent" type="checkbox" value="delete-account-permanent" class="delete-account-checkbox" />
-        <label for="delete-account-permanent">{{#t}}Account deletion is permanent. My account cannot be reactivated.{{/t}}</label>
-      </div>
+      <p>{{#t}}Please acknowledge that by deleting your account:{{/t}}</p>
 
-      <div class="input-row">
-        <input id="delete-account-lose-access" type="checkbox" value="delete-account-lose-access" class="delete-account-checkbox" />
-        <label for="delete-account-lose-access">{{#t}}I will lose access to any Mozilla apps and services connected to my account. My subscriptions will be cancelled.{{/t}}</label>
-      </div>
+      <ul class="delete-account-checkbox-list">
+        <li class='delete-account-checkbox-list-item'>
+          <input id="delete-account-permanent" type="checkbox" value="delete-account-permanent" class="delete-account-checkbox" />
+          <label for="delete-account-permanent">{{#t}}Any subscriptions you have will be cancelled{{/t}}</label>
+        </li>
 
-      <div class="input-row">
-        <input id="delete-account-saved-info" type="checkbox" value="delete-account-saved-info" class="delete-account-checkbox" />
-        <label for="delete-account-saved-info">{{#t}}I will lose any saved information within the Mozilla apps and services affiliated with my account.{{/t}}</label>
-      </div>
+        <li class='delete-account-checkbox-list-item'>
+          <input id="delete-account-lose-access" type="checkbox" value="delete-account-lose-access" class="delete-account-checkbox" />
+          <label for="delete-account-lose-access">{{#t}}You may lose saved information and features within Mozilla products{{/t}}</label>
+        </li>
+
+        <li class='delete-account-checkbox-list-item'>
+          <input id="delete-account-saved-info" type="checkbox" value="delete-account-saved-info" class="delete-account-checkbox" />
+          <label for="delete-account-saved-info">{{#t}}Reactivating with this email may not restore your saved information{{/t}}</label>
+        </li>
+      </ul>
 
       <div class="input-row password-row">
         <!-- add the autocomplete=off attribute - the user is deleting the account, they most likely don't want the password saved. -->
