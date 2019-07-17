@@ -45,17 +45,17 @@
       </ul>
 
       <div class="input-row">
-        <input id="delete-account-permanent" type="checkbox" value="delete-account-permanent" />
+        <input id="delete-account-permanent" type="checkbox" value="delete-account-permanent" class="delete-account-checkbox" />
         <label for="delete-account-permanent">{{#t}}Account deletion is permanent. My account cannot be reactivated.{{/t}}</label>
       </div>
 
       <div class="input-row">
-        <input id="delete-account-lose-access" type="checkbox" value="delete-account-lose-access" />
+        <input id="delete-account-lose-access" type="checkbox" value="delete-account-lose-access" class="delete-account-checkbox" />
         <label for="delete-account-lose-access">{{#t}}I will lose access to any Mozilla apps and services connected to my account. My subscriptions will be cancelled.{{/t}}</label>
       </div>
 
       <div class="input-row">
-        <input id="delete-account-saved-info" type="checkbox" value="delete-account-saved-info" />
+        <input id="delete-account-saved-info" type="checkbox" value="delete-account-saved-info" class="delete-account-checkbox" />
         <label for="delete-account-saved-info">{{#t}}I will lose any saved information within the Mozilla apps and services affiliated with my account.{{/t}}</label>
       </div>
 
@@ -65,7 +65,7 @@
       </div>
 
       <div class="button-row">
-        <button type="submit" class="settings-button warning-button">{{#t}}Delete account{{/t}}</button>
+        <button type="submit" class="settings-button warning-button delete-account-button" disabled>{{#t}}Delete account{{/t}}</button>
         <button class="settings-button secondary-button cancel">{{#t}}Cancel{{/t}}</button>
       </div>
 
