@@ -1,3 +1,21 @@
+## 1.141.7
+
+### Bug fixes
+
+- test: Fix the test. (3e4b2dace)
+
+## 1.141.6
+
+### New features
+
+- oauth: Add pairwise pseudonymous identifiers in access/id tokens (528fde259)
+
+## 1.141.5
+
+### Bug fixes
+
+- oauth: Ignore unknown refresh_token_id when destroying attached client. (bac54b375)
+
 ## 1.141.4
 
 No changes.

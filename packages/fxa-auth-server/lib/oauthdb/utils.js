@@ -57,6 +57,10 @@ module.exports = {
         return error.staleAuthAt(err.authAt);
       case 120:
         return error.insufficientACRValues(err.foundValue);
+      case 121:
+        return error.invalidRequestParameter('grant_type');
+      case 122:
+        return error.unknownRefreshToken();
       case 201:
         return error.serviceUnavailable(err.retryAfter);
       case 202:
