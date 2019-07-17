@@ -4,6 +4,15 @@ RUN npm install -g npm@6 && rm -rf ~app/.npm /tmp/*
 
 RUN addgroup -g 10001 app && \
     adduser -D -G app -h /app -u 10001 app
+
+COPY ["fxa-js-client", "../fxa-js-client/"]
+WORKDIR /fxa-js-client
+RUN npm ci
+
+COPY ["fxa-shared", "../fxa-shared/"]
+WORKDIR /fxa-shared
+RUN npm ci
+
 WORKDIR /app
 
 # S3 bucket in Cloud Services prod IAM

@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { GROUPS, initialize } = require('fxa-shared/metrics/amplitude');
+const { GROUPS, initialize } = require('../../../fxa-shared/metrics/amplitude');
 const logger = require('./logging/log')();
 const ua = require('./user-agent');
 const config = require('./configuration');
