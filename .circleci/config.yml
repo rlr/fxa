@@ -472,6 +472,16 @@ workflows:
               only: /.*/
             branches:
               ignore: /.*/
+          name: fxa-support-panel
+          module: fxa-support-panel
+          requires:
+            - install
+      - deploy-module:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
           name: fxa-content-server
           module: fxa-content-server
           requires:
