@@ -155,6 +155,7 @@ function newToken(payload = {}, options = {}) {
           code: res.result.code,
           code_verifier: options.codeVerifier,
           ppid_seed: options.ppidSeed,
+          resource: options.resource,
           ttl: ttl,
         },
       });
@@ -745,6 +746,23 @@ describe('/v1', function() {
       });
     });
 
+    describe('?resource', () => {
+      it('should fail in authorization code flow', async () => {
+        const res = await Server.api.post({
+          url: '/authorization',
+          payload: authParams({
+            client_id: client.id,
+            scope: 'profile profile:write profile:uid',
+            response_type: 'code',
+            resource: 'https://resource.server.com',
+          }),
+        });
+
+        assert.strictEqual(res.statusCode, 400);
+        assert.equal(res.result.errno, 109);
+      });
+    });
+
     describe('?response_type', function() {
       it('is optional', function() {
         mockAssertion().reply(200, VERIFY_GOOD);
@@ -938,6 +956,7 @@ describe('/v1', function() {
             payload: authParams({
               client_id: jwtClient.id,
               response_type: 'token',
+              resource: 'https://resource.server.com',
             }),
           });
 
@@ -948,6 +967,10 @@ describe('/v1', function() {
           assert.isNull(validators.jwt.validate(res.result.access_token).error);
           const jwt = decodeJWT(res.result.access_token);
           assert.strictEqual(jwt.claims.sub, USERID);
+          assert.deepEqual(jwt.claims.aud, [
+            jwtClient.id,
+            'https://resource.server.com',
+          ]);
 
           assert.equal(res.result.token_type, 'bearer');
           assert(res.result.scope);
@@ -4718,6 +4741,7 @@ describe('/v1', function() {
         },
         {
           clientId: clientId,
+          resource: 'https://resource.server.com',
         }
       );
 
@@ -4735,7 +4759,10 @@ describe('/v1', function() {
       assert.ok(tokenResult.result.refresh_token);
 
       const tokenResultJWT = decodeJWT(tokenResult.result.access_token);
-      assert.deepEqual(tokenResultJWT.claims.aud, [clientId]);
+      assert.deepEqual(tokenResultJWT.claims.aud, [
+        clientId,
+        'https://resource.server.com',
+      ]);
       assert.strictEqual(tokenResultJWT.claims.client_id, clientId);
       assert.ok(tokenResultJWT.claims.exp);
       assert.ok(tokenResultJWT.claims.iat);
@@ -4800,6 +4827,7 @@ describe('/v1', function() {
           client_secret: secret,
           grant_type: 'refresh_token',
           refresh_token: tokenResult.result.refresh_token,
+          resource: 'https://resource.server2.com',
           scope: 'a',
         },
       });
@@ -4816,8 +4844,13 @@ describe('/v1', function() {
       assert.isUndefined(refreshTokenResult.result.keys_jwe);
       assert.isUndefined(refreshTokenResult.result.refresh_token);
 
-      const refreshTokenResultJWT = decodeJWT(tokenResult.result.access_token);
-      assert.deepEqual(refreshTokenResultJWT.claims.aud, [clientId]);
+      const refreshTokenResultJWT = decodeJWT(
+        refreshTokenResult.result.access_token
+      );
+      assert.deepEqual(refreshTokenResultJWT.claims.aud, [
+        clientId,
+        'https://resource.server2.com',
+      ]);
       assert.strictEqual(refreshTokenResultJWT.claims.client_id, clientId);
       assert.ok(refreshTokenResultJWT.claims.exp);
       assert.ok(refreshTokenResultJWT.claims.iat);
@@ -4825,6 +4858,22 @@ describe('/v1', function() {
       assert.strictEqual(refreshTokenResultJWT.claims.scope, 'a');
       // No ppid or rotation.
       assert.strictEqual(refreshTokenResultJWT.claims.sub, USERID);
+
+      const noResourceRefreshTokenResult = await Server.api.post({
+        url: '/token',
+        payload: {
+          client_id: clientId,
+          client_secret: secret,
+          grant_type: 'refresh_token',
+          refresh_token: tokenResult.result.refresh_token,
+          scope: 'a',
+        },
+      });
+      assert.equal(noResourceRefreshTokenResult.statusCode, 200);
+      const noResourceRefreshTokenResultJWT = decodeJWT(
+        noResourceRefreshTokenResult.result.access_token
+      );
+      assert.deepEqual(noResourceRefreshTokenResultJWT.claims.aud, [clientId]);
     });
   });
 

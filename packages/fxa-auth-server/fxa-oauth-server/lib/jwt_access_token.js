@@ -14,6 +14,7 @@ const HEADER_TYP = 'at+JWT';
  */
 exports.create = async function generateJWTAccessToken(accessToken, grant) {
   const clientId = hex(grant.clientId);
+  const resources = grant.resource ? [grant.resource] : [];
 
   // Claims list from:
   // https://tools.ietf.org/html/draft-bertocci-oauth-access-token-jwt-00#section-2.2
@@ -27,7 +28,7 @@ exports.create = async function generateJWTAccessToken(accessToken, grant) {
 
     // We only specify the clientId because we do not yet accept
     // a `resource` parameter which we could use as the audience.
-    aud: [clientId],
+    aud: [clientId, ...resources],
     client_id: clientId,
     exp: Math.floor(accessToken.expiresAt / 1000),
     iat: Math.floor(Date.now() / 1000),

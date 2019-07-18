@@ -108,6 +108,26 @@ describe('/oauth/ routes', function() {
     }
   });
 
+  it('rejects `resource` parameter in /authorization request', async () => {
+    try {
+      await client.createAuthorizationCode({
+        client_id: PUBLIC_CLIENT_ID,
+        state: 'xyz',
+        code_challenge: MOCK_CODE_CHALLENGE,
+        code_challenge_method: 'S256',
+        resource: 'https://resource.server.com',
+      });
+      assert.fail('should have thrown');
+    } catch (err) {
+      assert.equal(err.errno, error.ERRNO.INVALID_PARAMETER);
+      assert.equal(
+        err.validation.keys[0],
+        'resource',
+        'resource param caught in validation'
+      );
+    }
+  });
+
   it('successfully grants tokens from sessionToken and notifies user', async () => {
     const SCOPE = 'https://identity.mozilla.com/apps/oldsync';
 

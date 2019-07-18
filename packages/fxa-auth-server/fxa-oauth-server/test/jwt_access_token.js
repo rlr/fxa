@@ -59,12 +59,30 @@ describe('lib/jwt_access_token', () => {
       assert.isTrue(mockJWT.sign.calledOnce);
 
       const signedClaims = mockJWT.sign.args[0][0];
+      assert.lengthOf(Object.keys(signedClaims), 7);
       assert.deepEqual(signedClaims.aud, ['deadbeef']);
       assert.strictEqual(signedClaims.client_id, 'deadbeef');
       assert.isAtLeast(signedClaims.exp, Math.floor(Date.now() / 1000));
       assert.isAtMost(signedClaims.iat, Math.floor(Date.now() / 1000));
       assert.strictEqual(signedClaims.scope, scope.toString());
       assert.strictEqual(signedClaims.sub, 'feedcafe');
+    });
+
+    it('should propagate resources in the `audience` claim', async () => {
+      requestedGrant.resources = [
+        'https://resource.server1.com',
+        'https://resource.server2.com',
+      ];
+      const result = await JWTAccessToken.create(
+        mockAccessToken,
+        requestedGrant
+      );
+      const signedClaims = mockJWT.sign.args[0][0];
+      assert.deepEqual(signedClaims.aud, [
+        'deadbeef',
+        'https://resource.server1.com',
+        'https://resource.server2.com',
+      ]);
     });
   });
 
